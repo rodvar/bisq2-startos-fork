@@ -1,7 +1,8 @@
 # Updating the upstream version
 
 This package wraps the node image the Bisq project publishes,
-`ghcr.io/bisq-network/bisq2-api`, unmodified. There is no `Dockerfile` here and
+`ghcr.io/bisq-network/bisq2-api`. The `Dockerfile` adds one layer that deletes
+the emSign roots from the JVM's `cacerts` and fails the build if any remain;
 nothing is built from source, so a version bump is a change to the image
 reference plus the four checks below.
 
@@ -13,7 +14,7 @@ published rather than deriving it from the Bisq 2 release.
 ## Determining the upstream version
 
 The current pin lives in `startos/manifest/index.ts` at
-`images.main.source.dockerTag`, as `<tag>@<index digest>`.
+`images.main.source.dockerBuild.buildArgs.IMAGE`, as `<tag>@<index digest>`.
 
 Fetch the tags published for the image:
 
@@ -37,7 +38,7 @@ release, see <https://github.com/bisq-network/bisq2/releases>.
 
 ## Applying the bump
 
-1. Resolve the tag's multi-arch index digest and set `dockerTag` in
+1. Resolve the tag's multi-arch index digest and set `IMAGE` in
    `startos/manifest/index.ts` to `ghcr.io/bisq-network/bisq2-api:<tag>@<digest>`:
 
    ```sh
@@ -59,7 +60,7 @@ release, see <https://github.com/bisq-network/bisq2/releases>.
    file name, and the API bind address. Use the resolved `<tag>@<digest>`
    reference from step 1, here and in step 5: a bare tag can answer from a stale
    local cache, so what these commands validate would not be the bytes
-   `dockerTag` pins.
+   `IMAGE` pins.
 
    ```sh
    docker run --rm --entrypoint sh \
